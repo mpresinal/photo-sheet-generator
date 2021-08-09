@@ -23,6 +23,7 @@ public class MainJFrame extends javax.swing.JFrame {
     public MainJFrame(PhotoSheetPdfService photoSheetPdfService) {
         this.photoSheetPdfService = photoSheetPdfService;
         initComponents();
+        progressBar.setVisible(false);
     }
 
     /**
@@ -49,6 +50,7 @@ public class MainJFrame extends javax.swing.JFrame {
         jComboBox1 = new javax.swing.JComboBox<>();
         progressBar = new javax.swing.JProgressBar();
         generateButton = new javax.swing.JButton();
+        jLabel2 = new javax.swing.JLabel();
 
         saveFileChooser.setDialogType(javax.swing.JFileChooser.SAVE_DIALOG);
         saveFileChooser.setFileSelectionMode(javax.swing.JFileChooser.DIRECTORIES_ONLY);
@@ -102,6 +104,7 @@ public class MainJFrame extends javax.swing.JFrame {
                     .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(progressBar, javax.swing.GroupLayout.PREFERRED_SIZE, 432, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addGroup(jPanel1Layout.createSequentialGroup()
                                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                                     .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, 57, Short.MAX_VALUE)
@@ -117,12 +120,10 @@ public class MainJFrame extends javax.swing.JFrame {
                                 .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 101, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(13, 13, 13)
                                 .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                .addComponent(progressBar, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel1Layout.createSequentialGroup()
-                                    .addComponent(inputDirTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 313, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                    .addComponent(selectInputDirButton))))
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addComponent(inputDirTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 313, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(selectInputDirButton)))
                         .addGap(0, 6, Short.MAX_VALUE)))
                 .addContainerGap())
         );
@@ -148,8 +149,8 @@ public class MainJFrame extends javax.swing.JFrame {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addComponent(progressBar, javax.swing.GroupLayout.PREFERRED_SIZE, 6, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(progressBar, javax.swing.GroupLayout.PREFERRED_SIZE, 12, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
 
@@ -159,6 +160,8 @@ public class MainJFrame extends javax.swing.JFrame {
                 generateButtonActionPerformed(evt);
             }
         });
+
+        jLabel2.setText("Version 1.0");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -170,17 +173,20 @@ public class MainJFrame extends javax.swing.JFrame {
                     .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(generateButton)
-                        .addGap(0, 0, Short.MAX_VALUE)))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(generateButton)
-                .addGap(16, 16, 16))
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(generateButton)
+                    .addComponent(jLabel2))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         pack();
@@ -205,22 +211,30 @@ public class MainJFrame extends javax.swing.JFrame {
         String fileName = nameTextField.getText();
         if (fileName != null && !fileName.isBlank()) {
             String inputDir = imageFolderFileChooser.getSelectedFile().getPath();
+            String pdfFile = fileName+".pdf"; 
             String outputFile = saveFileChooser.getSelectedFile()
                     .toPath()
-                    .resolve(fileName+".pdf").toString();
+                    .resolve(pdfFile).toString();
             PhotoSheetProperties props = new PhotoSheetProperties();
             props.setPhotosPerRow(3);
             progressBar.setVisible(true);
             try {
                 photoSheetPdfService.doPdf(inputDir, outputFile, props);
+                JOptionPane.showMessageDialog(this, "The pdf photo sheet file: " + pdfFile
+                        + " has been created successfully in: " + saveFileChooser.getSelectedFile().getPath(), 
+                    "Success", JOptionPane.INFORMATION_MESSAGE);
             } catch (PhotoSheetPdfException ex) {
                 Logger.getLogger(MainJFrame.class.getName()).log(Level.SEVERE, null, ex);
+                JOptionPane.showMessageDialog(this, "Could not generate the pdf photo sheet due to error: " +ex.getMessage(), 
+                    "Error", JOptionPane.ERROR_MESSAGE);
+            } finally {
+                progressBar.setVisible(false);
             }
             
         } else {
             // show error
-            JOptionPane.showConfirmDialog(this, "The file name is required.", 
-                    "Required Field", JOptionPane.OK_OPTION, JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "The file name is required.", 
+                    "Required Field", JOptionPane.ERROR_MESSAGE);
         }
         
     }//GEN-LAST:event_generateButtonActionPerformed
@@ -259,6 +273,7 @@ public class MainJFrame extends javax.swing.JFrame {
     private javax.swing.JTextField inputDirTextField;
     private javax.swing.JComboBox<String> jComboBox1;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;

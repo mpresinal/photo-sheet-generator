@@ -5,6 +5,7 @@ import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.WriterProperties;
 import com.presinal.photo.sheet.generator.component.PhotoSheetHtmlGenerator;
 import com.presinal.photo.sheet.generator.domain.PhotoSheetProperties;
+import com.presinal.photo.sheet.generator.service.AbstractPhotoSheetPdfService;
 import com.presinal.photo.sheet.generator.service.execption.PhotoSheetPdfException;
 import com.presinal.photo.sheet.generator.service.PhotoSheetPdfService;
 import org.slf4j.Logger;
@@ -29,7 +30,7 @@ import java.util.stream.Collectors;
  * @author Miguel Presinal <presinal378@gmail.com>
  */
 @Service
-public class HtmlPhotoSheetPdfServiceImpl implements PhotoSheetPdfService {
+public class HtmlPhotoSheetPdfServiceImpl extends AbstractPhotoSheetPdfService implements PhotoSheetPdfService {
 
     private final Logger LOGGER = LoggerFactory.getLogger(HtmlPhotoSheetPdfServiceImpl.class);
     private static final String SUPPORTED_IMAGE_FORMATS = ".jpg|.jpeg|.jpe|.pjpeg|.pjp|.jif|.jfif|.jfi|.gif|.png";
@@ -57,11 +58,8 @@ public class HtmlPhotoSheetPdfServiceImpl implements PhotoSheetPdfService {
 
     }
 
-    private List<Path> listImageFiles(String imagesDir) throws IOException {
-        final Pattern regPattern = Pattern.compile(this.supportedImageFormat, Pattern.CASE_INSENSITIVE);
-        return Files.list(Paths.get(imagesDir))
-                //.filter( p -> regPattern.matcher(p.getFileName().toString()).matches())
-                .map(p -> p.getFileName())
-                .collect(Collectors.toList());
+    @Override
+    protected String getSupportedImageFormat() {
+        return supportedImageFormat;
     }
 }
